@@ -1,6 +1,8 @@
 <template>
   <div>
-    <TextBox :onPost="addMessage"/>
+    <TextBox
+      :onPost="addMessage"
+      :channelId="$route.params.channelId"/>
     <div class="devider"></div>
     <Spinner v-if="!initialLoaded" />
     <p class="no-messages" v-else-if="initialLoaded && messages.length === 0">投稿データ0件</p>
