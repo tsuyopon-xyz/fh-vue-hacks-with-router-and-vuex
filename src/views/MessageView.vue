@@ -33,9 +33,7 @@ export default {
     }
   },
   async created() {
-    const messages = await this.fetchMessages();
-    this.messages = messages;
-    this.initialLoaded = true;
+    await this.fetchMessages();
   },
   methods: {
     addMessage(message) {
@@ -44,14 +42,22 @@ export default {
     async fetchMessages() {
       let messages = [];
       try {
-        messages = await MessageModel.fetchMessages();
+        messages = await MessageModel.fetchMessages(this.$route.params.channelId);
       } catch (error) {
         // 読み込み失敗など、何かしらのエラーが発生したら
         // ユーザーにデータの取得が失敗したことを知らせる
         alert(error.message);
       }
 
-      return messages;
+      this.messages = messages;
+      this.initialLoaded = true;
+    }
+  },
+  watch: {
+    '$route': async function() {
+      this.initialLoaded = false;
+      this.messages = [];
+      await this.fetchMessages();
     }
   }
 }
