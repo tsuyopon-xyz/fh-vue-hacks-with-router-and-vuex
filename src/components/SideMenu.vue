@@ -1,16 +1,34 @@
 <template>
   <aside class="menu">
     <ul class="menu-list">
-      <li class="menu-list-title active">全体連絡</li>
-      <li class="menu-list-title">雑談</li>
-      <li class="menu-list-title">自己紹介</li>
+      <template v-for="{id, name} in menuDataList">
+        <router-link
+          :to="id"
+          tag="li"
+          class="menu-list-title"
+          :key="id"
+        >
+          <a class="menu-list-title-link">{{ name }}</a>
+        </router-link>
+      </template>
     </ul>
   </aside>
 </template>
 
 <script>
-export default {
+import ChannelModel from '../models/Channel';
 
+export default {
+  async created() {
+    const channels = await ChannelModel.fetch();
+    this.menuDataList = channels;
+  },
+
+  data() {
+    return {
+      menuDataList: []
+    }
+  }
 }
 </script>
 
@@ -34,10 +52,17 @@ export default {
   border-bottom: 1px solid black;
   height: 40px;
   line-height: 40px;
+}
+
+.menu-list-title-link {
+  text-decoration: none;
+  display: block;
+  color: black;
   font-size: 0.8em;
 }
 
-.menu-list-title:hover, .active {
+.menu-list-title-link:hover,
+.router-link-exact-active .menu-list-title-link {
   font-size: 1em;
   background-color: #555;
   color: white;
