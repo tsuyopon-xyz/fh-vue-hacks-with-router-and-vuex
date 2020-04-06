@@ -1,18 +1,19 @@
 <template>
-  <main class="main-container">
+  <div>
     <TextBox :onPost="addMessage"/>
     <div class="devider"></div>
     <Spinner v-if="!initialLoaded" />
     <p class="no-messages" v-else-if="initialLoaded && messages.length === 0">投稿データ0件</p>
     <MessageList v-else :messages="reversedMessages" />
-  </main>
+  </div>
 </template>
 
 <script>
-import TextBox from './TextBox';
-import MessageList from './MessageList';
-import MessageModel from '../models/Message';
-import Spinner from './Spinner';
+import TextBox from '@/components/TextBox';
+import MessageList from '@/components/MessageList';
+import Spinner from '@/components/Spinner';
+
+import MessageModel from '@/models/Message';
 
 export default {
   components: {
@@ -57,13 +58,6 @@ export default {
 </script>
 
 <style scoped>
-.main-container {
-  width: calc(100% - 200px);
-  flex: 1;
-  position: absolute;
-  left: 200px;
-}
-
 .devider {
   border-top: 10px solid #ccc;
 }
