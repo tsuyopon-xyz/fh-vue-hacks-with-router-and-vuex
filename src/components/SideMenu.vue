@@ -1,7 +1,7 @@
 <template>
   <aside class="menu">
     <ul class="menu-list">
-      <template v-for="{id, name} in menuDataList">
+      <template v-for="{id, name} in getMenuDataList">
         <router-link
           :to="id"
           tag="li"
@@ -16,18 +16,26 @@
 </template>
 
 <script>
-import ChannelModel from '../models/Channel';
+import { mapGetters } from 'vuex';
+
+// import ChannelModel from '../models/Channel';
 
 export default {
   async created() {
-    const channels = await ChannelModel.fetch();
-    this.menuDataList = channels;
+    // const channels = await ChannelModel.fetch();
+    // this.menuDataList = channels;
   },
 
-  data() {
-    return {
-      menuDataList: []
-    }
+  // data() {
+  //   return {
+  //     menuDataList: []
+  //   }
+  // }
+
+  computed: {
+    ...mapGetters({
+      getMenuDataList: 'channels/getMenuDataList'
+    })
   }
 }
 </script>

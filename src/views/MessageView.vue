@@ -4,16 +4,19 @@
       :onPost="addMessage"
       :channelId="$route.params.channelId"/>
     <div class="devider"></div>
-    <Spinner v-if="!initialLoaded" />
+    <MessageList :messages="messages($route.params.channelId)" />
+    <!-- <Spinner v-if="!initialLoaded" />
     <p class="no-messages" v-else-if="initialLoaded && messages.length === 0">投稿データ0件</p>
-    <MessageList v-else :messages="reversedMessages" />
+    <MessageList v-else :messages="reversedMessages" /> -->
   </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
 import TextBox from '@/components/TextBox';
 import MessageList from '@/components/MessageList';
-import Spinner from '@/components/Spinner';
+// import Spinner from '@/components/Spinner';
 
 import MessageModel from '@/models/Message';
 
@@ -21,15 +24,18 @@ export default {
   components: {
     TextBox,
     MessageList,
-    Spinner
+    // Spinner
   },
   data() {
     return {
-      messages: [],
+      // messages: [],
       initialLoaded: false
     };
   },
   computed: {
+    ...mapGetters({
+      messages: 'channels/getChannelMessages'
+    }),
     reversedMessages() {
       return this.messages.slice().reverse();
     }
