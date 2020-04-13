@@ -12,7 +12,10 @@ const firebaseConfig = {
 };
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
-firebase.analytics();
+if(typeof firebase.analytics === 'function') {
+  firebase.analytics();
+}
+
 
 export const db = firebase.firestore();
 export const dbChannels = db.collection('channels');
