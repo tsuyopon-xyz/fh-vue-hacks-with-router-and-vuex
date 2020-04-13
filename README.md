@@ -1,103 +1,101 @@
 # エクササイズ
 
-【Firebase連携版】ページ切り替えができる掲示板アプリを作る
+【Firebase連携版】ページ切り替えができる掲示板アプリにVuexを組み込む
 
-(Vue編の「【エクササイズ】掲示板アプリとFirebaseを連携する」で作成したアプリに機能追加をする形)
+(Vue編の「エクササイズ】Firebase連携版ページ切り替えができる掲示板アプリを作る」で作成したアプリに機能追加をする形)
 
-## ステップ1. Vue Routerの追加と、それに伴う不要ファイルの削除と一部ファイルの修正を行う
+## ステップ1. Vuexの追加と、 テスト実行環境の準備
 
 1. 完成形の動作確認(これから実装するアプリのイメージを把握する)
-1. Vue編の「【エクササイズ】掲示板アプリとFirebaseを連携する」のコードをgit cloneして前回課題の完成形をダウンロードする
+1. Vue Router編の「エクササイズ】Firebase連携版ページ切り替えができる掲示板アプリを作る」のコードをgit cloneして前回課題の完成形をダウンロードする
     - もしくは自分で作成したアプリを使うのであれば、git cloneの必要は無し
-1. Vue Routerを追加する
-1. Vue Routerを追加した際の不要ファイルの削除とコード一部修正
+1. Vuexを追加する
+1. テストの実行環境の準備をする
+    - npm i -D jest
+    - package.jsonのscriptsに 「"test": "jest"」を追加
+    - Storeのテスト用に予めディレクトリを準備する
+        - testのディレクトリ
+        - storeのモジュールのディレクトリ
 
 ---
 
-## ステップ2. 今回の課題で行うFirestoreの構造の修正を解説する
+## ステップ2. stateのデータ構造の解説とダミーデータの準備
 
-1. スライドを使って前回のFirestoreの構成と、今回修正するFirestoreの構成を解説する
-1. Firestoreの構成を修正する
-    - channels(collection)
-        - general(doc)
-            - name(field): 全体連絡
-            - messages(collection)
-                - id: (ランダム値)
-                    - メッセージデータ1(doc)
-                - id: (ランダム値)
-                    - メッセージデータ1(doc)
-                - id: (ランダム値)
-                    - メッセージデータ1(doc)
-        - chat
-            - name(field): 雑談部屋
-            - messages(collection)
-        - self-introduction
-            - name(field): 自己紹介
-            - messages(collection)
+1. ダミーデータを使って、stateの構造を解説
+1. 次回はgettersの実装を行い、今回用意したダミーデータを使って、メニューの表示とメッセージ一覧の表示を行う
 
 ---
 
-## ステップ3. ルーティングの設定と表示を行う
+## ステップ3. gettersの機能とテストの実装
 
-1. 「MessageView.vue」をsrc/viewsディレクトリに移動する
-    - Firebaseを使わない方の課題で、「Main.vue → MessageView.vue」という名前に変更
-1. ルーティングの設定を行う
-    - 以下の設定を行う
-        - /:channelId : MessageView
-1. App.vueの修正
-    - Firebase連携していない方と同じような修正を行う
-        - MessageView.vueのstyleを持ってくる
-        - router-viewを埋め込む
-1. MessageView.vueがうまく動かない場合は、コメントアウトなどをしてとにかくtemplateが表示される所まで修正する
-
-## ステップ4. SideMenuのメニュー情報をFirestoreから引っ張ってくる
-
-1. Firestoreにchannelsの初期情報を設定しておく
-1. Firestoreとやり取りするコードを修正・新規作成する
-    - 修正
-        - src/db/index.js
-            - messagesを指定している部分の削除
-            - channelsを指定するコードを追加
-    - 新規作成
-        - src/models/Channel.js
-            - channelsコレクション情報を取得する機能の実装
-            - Channelインスタンスは「id」「name」プロパティを保持できるようなconstructorを実装する
-1. Firestoreから取得したchannelsの情報を使ってメニューをSideMenu動的に生成する
-    - 「src/models/Channel.js」を使ってFirestoreからChannel一覧情報を取得してdataにセットする
-    - dataにセットしたChannel一覧情報を使って、router-linkを使ってメニューを作る
-        - 「/:channelId」の部分はchannelIdを使う(general, chat, self-introductionが入る)
-    - Firestoreのchannelsにドキュメントを追加したら、動的にメニューが増えることを確認する
-        - 説明用に追加するだけなので、説明が終わったらすぐに削除する
-    - SideMenu.vueのスタイルが崩れたらスタイルの調整も行う
-1. ページ遷移が出来ているか確認するために「$route.params.channelId」を表示する
+1. gettersの実装ファイルとテストファイルを作成する
+1. gettersのテストの作成と、機能の実装を行う
+1. 実装したgettersをstoreに組み込む
+    - modules/channelsにindex.jsでstate, getters, mutations, actionsを最終的に公開出来るようにする
+1. ダミーデータでメニュー一覧とメッセージ一覧を表示する
+    - SideMenuの修正
+    - MessageViewの修正
 
 ---
 
-## ステップ5. general, chat, self-introductionのmessagesを表示するための実装をする
+## ステップ4. actionsでメニューデータを取得し、mutationsでstateにセットする
 
-1. 予めchannelそれぞれのmessagesサブコレクションに1件ずつダミーデータを用意する
-1. src/db/index.jsに追加実装する
-    - channelIdを渡すと、「channels/:channelId/messages」にアクセスできるオブジェクトを返す関数を用意する
-1. src/models/Message.jsを修正する
-    - 「fetchMessages」メソッドの修正
-        - 引数にchannelIdを受け取れるように修正する
-        - 引数で受け取ったchannelIdを使って、1つ前に「src/db/index.js」に追加実装した機能を呼び出して、「channels/:channelId/messages」にアクセスできるオブジェクトを取得する
-1. src/views/MessageView.vueを修正する
-    - 「src/models/Message」の「fetchMessages」メソッド実行時に「channelIdを渡す」
-        - $route.params.channelIdを使う
-    - 「/:channelId」間のページ遷移でも、各channelのmessagesを取得できるような修正をする
-        - watchを使って「$route」を監視する
+1. mutationsの機能実装とテスト作成
+    - setChannelsメソッド
+    - setLoadingメソッド
+1. actionsの機能実装とテスト作成
+    - fetchChannelsメソッド
+        - jest.mockの簡単な説明
+            - インターネット接続部分を実際のテストでも実行すると、テストに成功したり失敗したりと安定しないテストになる
+                - ネット回線が繋がっていない時
+                - ネット環境が不安定の時
+            - インターネット接続が発生するメソッドを呼び出す時に、仮のデータを必ず返すようにすることで、あたかもインターネット経由でデータを取得したかのように振る舞うことができる
+                - 実際にはインターネット接続を行わず、指定したメソッドの戻り値を予め決めた値に設定するだけ
+                    - mockResolvedValue を使って、戻り値を固定でセットしている
+            - mockResolvedValueのドキュメント
+                - https://jestjs.io/docs/ja/mock-function-api#mockfnmockresolvedvaluevalue
+1. mutationsとactionsをstoreに組み込む
+1. SideMenuの修正
+    - dispatchでメニューデータを取得しに行き、stateに保存する
+    - gettersを使ってメニュー一覧を取得&表示
+    - stateのloadingフラグを使って、読み込み中の時はSideMenuにSpinnerを表示する
 
----
+## ステップ5. actionsでチャンネルごとのメッセージ一覧を取得し、mutationsでstateにセットする
 
-## ステップ6. channel毎のmessagesにデータを送信できるようにする
+1. mutationsの機能実装とテスト作成
+    - setChannelMessages メソッド
+1. actionsの機能実装とテスト作成
+    - fetchChannelMessages メソッド
+1. MessageViewの修正
+    - dispatchでチャンネルごとのメッセージ一覧を取得しに行き、stateに保存する
+    - gettersを使ってメッセージ一覧を取得&表示
+    - stateのloadingフラグを使って、読み込み中の時はメッセージ一覧表示部分にSpinnerを表示する
 
-1. src/models/Message.jsを修正する
-    - 「save」メソッドで、channelIdも受け取れるようにする
-    - 1つ前のステップで「src/db/index.js」に追加実装した機能を呼び出して、「channels/:channelId/messages」にアクセスできるオブジェクトを取得する
-    - 「channels/:channelId/messages」にアクセスできるオブジェクトを使って、channel特有のmessagesにデータを送信する
-1. src/components/TextBox.vueを修正する
-    - propsに「channelId」を追加する(type:String, required: true)
-    - 「src/models/Message.js」の「save」メソッド実行時に、送信データの他にchannelIdも渡すようにする
-1. src/views/MessageView.vueを修正する
-    - template内でTextBoxに「:channelId="$route.params.channelId"」を追加する
+## ステップ6. actionsでメッセージを送信して、 mutationsメッセージ一覧を更新する
+
+1. mutationsの機能実装とテスト作成
+    - addMessage メソッド
+1. actionsの機能実装とテスト作成
+    - postMessage メソッド
+1. TextBoxの修正
+    - postMessage用のloadingフラグを利用
+    - dispatchでメッセージを送信
+    - propsの削除
+1. MessageViewの修正
+    - TextBoxのprops削除に伴う、propsを渡している部分のコードを削除
+
+## ステップ7. Vue.setを使うときと、使わなかったときの動作の違いを解説
+
+1. mutations の setChannelMessages メソッドを確認
+    - Vue.setを使っている現状の動作を再度確認
+    - Vue.setの代わりに直接プロパティ埋め込みしたときの動作を確認
+    - stateで各チャンネルの情報を予めセットしていない
+        - channel情報はFirestoreから取得してきているため、事前にセットすることが出来ない
+            - メニューを動的に増やせる
+                - 例としてダミーのチャンネルを増やして再読み込みすると、Firestoreに追加したチャンネルがそのままメニューに追加される
+                - 今回は実装していないが、Firestoreにメニューを追加するプログラムを実装すれば、好きなメニューを好きなだけ作れる
+    - stateに予め準備していないプロパティを追加する際には、Vue.setを使う必要がある。(新しいプロパティを直接追加するとVueがプロパティの更新を検出できない。)
+        - Vueのドキュメント
+            - https://jp.vuejs.org/v2/api/#Vue-set
+        - Vuexのドキュメント
+            - https://vuex.vuejs.org/ja/guide/mutations.html#vue-%E3%81%AE%E3%83%AA%E3%82%A2%E3%82%AF%E3%83%86%E3%82%A3%E3%83%96%E3%81%AA%E3%83%AB%E3%83%BC%E3%83%AB%E3%81%AB%E5%89%87%E3%81%A3%E3%81%9F%E3%83%9F%E3%83%A5%E3%83%BC%E3%83%86%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3
