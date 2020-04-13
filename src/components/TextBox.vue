@@ -16,43 +16,34 @@
 
 <script>
 import Button from './Button';
-import MessageModel from '../models/Message';
 
 export default {
   components: {
     Button
   },
-  props: {
-    onPost: {
-      type: Function,
-      required: true
-    },
-    channelId: {
-      type: String,
-      required: true
-    }
-  },
   data() {
     return {
-      body: '',
-      canPost: true
+      body: ''
+    }
+  },
+  computed: {
+    canPost() {
+      return !this.$store.state.channels.loading.postMessage;
     }
   },
   methods: {
     async post() {
-      this.canPost = false;
       try {
-        const message = await MessageModel.save({
+        const payload = {
           body: this.body,
-          channelId: this.channelId
-        });
-        this.onPost(message);
+          channelId: this.$route.params.channelId
+        };
+
+        await this.$store.dispatch('channels/postMessage', payload);
         this.body = '';
       } catch (error) {
         alert(error.message);
       }
-
-      this.canPost = true;
     },
   }
 }
