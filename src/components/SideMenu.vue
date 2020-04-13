@@ -1,6 +1,7 @@
 <template>
   <aside class="menu">
-    <ul class="menu-list">
+    <Spinner v-if="isLoading"/>
+    <ul v-else class="menu-list">
       <template v-for="{id, name} in getMenuDataList">
         <router-link
           :to="id"
@@ -17,25 +18,22 @@
 
 <script>
 import { mapGetters } from 'vuex';
-
-// import ChannelModel from '../models/Channel';
+import Spinner from '@/components/Spinner';
 
 export default {
-  async created() {
-    // const channels = await ChannelModel.fetch();
-    // this.menuDataList = channels;
+  components: {
+    Spinner
   },
-
-  // data() {
-  //   return {
-  //     menuDataList: []
-  //   }
-  // }
-
+  async created() {
+    this.$store.dispatch('channels/fetchChannels');
+  },
   computed: {
     ...mapGetters({
       getMenuDataList: 'channels/getMenuDataList'
-    })
+    }),
+    isLoading() {
+      return this.$store.state.channels.loading.channels;
+    }
   }
 }
 </script>
