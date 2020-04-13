@@ -25,4 +25,18 @@ export const mutations = {
       state.channels[index].messages = [...messages];
     }
   },
+
+  addMessage(state, { channelId, message }) {
+    const index = state.channels.findIndex(
+      channel => channel.id === channelId
+    );
+    if (index === -1) {
+      throw new Error('存在しないID');
+    }
+
+    state.channels[index].messages = [
+      ...state.channels[index].messages,
+      message
+    ];
+  }
 };

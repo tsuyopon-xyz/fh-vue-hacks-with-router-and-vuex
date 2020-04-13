@@ -100,4 +100,22 @@ describe('store/modules/channels/mutations.jsのテスト', () => {
       ]
     });
   });
+
+  it('addMessageメソッドのテスト', () => {
+    const state = createMockStateWithChannel();
+    const payload = {
+      channelId: state.channels[0].id,
+      message: 'message',
+    };
+
+    mutations.addMessage(state, payload);
+    expect(state).toStrictEqual({
+      channels: [
+        {
+          id: state.channels[0].id,
+          messages: [payload.message]
+        }
+      ]
+    });
+  });
 });
