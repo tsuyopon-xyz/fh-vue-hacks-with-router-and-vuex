@@ -1,9 +1,9 @@
 import { actions } from '../../../../store/modules/channels/actions';
 import Channel from '../../../../models/Channel';
-// import Message from '../../../../models/Message';
+import Message from '../../../../models/Message';
 
 jest.mock('../../../../models/Channel');
-// jest.mock('../../../../models/Message');
+jest.mock('../../../../models/Message');
 
 describe('store/modules/channels/actions.jsのテスト', () => {
   const createContext = (callback) => {
@@ -14,6 +14,10 @@ describe('store/modules/channels/actions.jsのテスト', () => {
 
   const createMockChannels = () => {
     return [{id: 'mockChannelId', name: 'mockChannelName'}]
+  };
+
+  const createMockMessages = () => {
+    return ['message1', 'message2', 'message3'];
   };
 
   it('fetchChannelsメソッドのテスト', async () => {
@@ -40,6 +44,38 @@ describe('store/modules/channels/actions.jsのテスト', () => {
       {
         type: 'setLoading',
         loadingType: 'channels',
+        isLoading: false
+      }
+    ]);
+  });
+
+  it('fetchChannelMessagesメソッドのテスト', async () => {
+    const mockMessages = createMockMessages();
+    const commits = [];
+    Message.fetchMessages.mockResolvedValue(mockMessages);
+
+    const context = createContext((payload) => {
+      commits.push(payload)
+    });
+    const payload = {channelId: 'general'}
+
+    await actions.fetchChannelMessages(context, payload);
+
+    expect(commits.length).toStrictEqual(3);
+    expect(commits).toStrictEqual([
+      {
+        type: 'setLoading',
+        loadingType: 'messages',
+        isLoading: true
+      },
+      {
+        type: 'setChannelMessages',
+        messages: mockMessages,
+        channelId: payload.channelId
+      },
+      {
+        type: 'setLoading',
+        loadingType: 'messages',
         isLoading: false
       }
     ]);
