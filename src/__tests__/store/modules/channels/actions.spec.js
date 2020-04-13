@@ -80,4 +80,39 @@ describe('store/modules/channels/actions.jsのテスト', () => {
       }
     ]);
   });
+
+  it('postMessageメソッドのテスト', async () => {
+    const mockMessage = 'mockMessage';
+    const commits = [];
+    Message.save.mockResolvedValue(mockMessage);
+
+    const context = createContext((payload) => {
+      commits.push(payload)
+    });
+    const payload = {
+      channelId: 'general',
+      body: 'message body'
+    };
+
+    await actions.postMessage(context, payload);
+
+    expect(commits.length).toStrictEqual(3);
+    expect(commits).toStrictEqual([
+      {
+        type: 'setLoading',
+        loadingType: 'postMessage',
+        isLoading: true
+      },
+      {
+        type: 'addMessage',
+        message: mockMessage,
+        channelId: payload.channelId
+      },
+      {
+        type: 'setLoading',
+        loadingType: 'postMessage',
+        isLoading: false
+      }
+    ]);
+  });
 });

@@ -46,4 +46,30 @@ export const actions = {
       isLoading: false
     });
   },
+
+  async postMessage({ commit }, { channelId, body }) {
+    commit({
+      type: 'setLoading',
+      loadingType: 'postMessage',
+      isLoading: true
+    });
+    try {
+      const message = await Message.save({
+        body,
+        channelId
+      });
+      commit({
+        type: 'addMessage',
+        channelId,
+        message
+      });
+    } catch (error) {
+      alert(error.message);
+    }
+    commit({
+      type: 'setLoading',
+      loadingType: 'postMessage',
+      isLoading: false
+    });
+  }
 };
