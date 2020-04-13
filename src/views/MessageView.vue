@@ -4,10 +4,9 @@
       :onPost="addMessage"
       :channelId="$route.params.channelId"/>
     <div class="devider"></div>
-    <MessageList :messages="messages($route.params.channelId)" />
-    <!-- <Spinner v-if="!initialLoaded" />
-    <p class="no-messages" v-else-if="initialLoaded && messages.length === 0">投稿データ0件</p>
-    <MessageList v-else :messages="reversedMessages" /> -->
+    <Spinner v-if="isLoading" />
+    <p class="no-messages" v-else-if="messages($route.params.channelId).length === 0">投稿データ0件</p>
+    <MessageList v-else :messages="messages($route.params.channelId)" />
   </div>
 </template>
 
@@ -16,56 +15,46 @@ import { mapGetters } from 'vuex';
 
 import TextBox from '@/components/TextBox';
 import MessageList from '@/components/MessageList';
-// import Spinner from '@/components/Spinner';
-
-import MessageModel from '@/models/Message';
+import Spinner from '@/components/Spinner';
 
 export default {
   components: {
     TextBox,
     MessageList,
-    // Spinner
-  },
-  data() {
-    return {
-      // messages: [],
-      initialLoaded: false
-    };
+    Spinner
   },
   computed: {
     ...mapGetters({
       messages: 'channels/getChannelMessages'
     }),
-    reversedMessages() {
-      return this.messages.slice().reverse();
+    isLoading() {
+      return this.$store.state.channels.loading.messages;
     }
   },
   async created() {
-    // await this.fetchMessages();
+    await this.fetchMessages();
   },
   methods: {
     addMessage(message) {
       this.messages.push(message);
     },
     async fetchMessages() {
-      let messages = [];
+      const payload = {
+        channelId: this.$route.params.channelId
+      };
+
       try {
-        messages = await MessageModel.fetchMessages(this.$route.params.channelId);
+        this.$store.dispatch('channels/fetchChannelMessages', payload);
       } catch (error) {
         // 読み込み失敗など、何かしらのエラーが発生したら
         // ユーザーにデータの取得が失敗したことを知らせる
         alert(error.message);
       }
-
-      this.messages = messages;
-      this.initialLoaded = true;
     }
   },
   watch: {
     '$route': async function() {
-      this.initialLoaded = false;
-      // this.messages = [];
-      // await this.fetchMessages();
+      await this.fetchMessages();
     }
   }
 }
