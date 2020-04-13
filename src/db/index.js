@@ -1,14 +1,14 @@
 import firebase from 'firebase';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBFEFd1iYiy0r_x6l3Ldao3HOcFT86VB3A",
-  authDomain: "vue-hacks-b1415.firebaseapp.com",
-  databaseURL: "https://vue-hacks-b1415.firebaseio.com",
-  projectId: "vue-hacks-b1415",
-  storageBucket: "vue-hacks-b1415.appspot.com",
-  messagingSenderId: "681190762344",
-  appId: "1:681190762344:web:ea244d511029f1395258dd",
-  measurementId: "G-JYBY9W56GE"
+  apiKey: "AIzaSyA6liUESccLLRjWJEYA842FTtz4EisrCoM",
+  authDomain: "vuex-hacks.firebaseapp.com",
+  databaseURL: "https://vuex-hacks.firebaseio.com",
+  projectId: "vuex-hacks",
+  storageBucket: "vuex-hacks.appspot.com",
+  messagingSenderId: "85825240575",
+  appId: "1:85825240575:web:7dcd1edd21d1bfb1f63bca",
+  measurementId: "G-V26F7WQGPB"
 };
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
