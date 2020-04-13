@@ -16,6 +16,17 @@ describe('store/modules/channels/mutations.jsのテスト', () => {
     };
   };
 
+  const createMockStateWithChannel = () => {
+    return {
+      channels: [
+        {
+          id: 'general',
+          messages: []
+        }
+      ]
+    };
+  };
+
   it('setChannelsメソッドのテスト', () => {
     const state = createMockStateWithoutChannels();
     const newChannels = ['new channel', 'new channel2'];
@@ -68,6 +79,25 @@ describe('store/modules/channels/mutations.jsのテスト', () => {
           messages: false
         }
       });
+    });
+  });
+
+  it('setChannelMessagesメソッドのテスト', () => {
+    const state = createMockStateWithChannel();
+    const newMessages = ['new message1', 'new message2'];
+    const payload = {
+      channelId: state.channels[0].id,
+      messages: newMessages
+    };
+
+    mutations.setChannelMessages(state, payload);
+    expect(state).toStrictEqual({
+      channels: [
+        {
+          id: state.channels[0].id,
+          messages: [...newMessages]
+        }
+      ]
     });
   });
 });
