@@ -41,7 +41,7 @@ export default {
     }
   },
   async created() {
-    await this.fetchMessages();
+    // await this.fetchMessages();
   },
   methods: {
     addMessage(message) {
@@ -64,8 +64,8 @@ export default {
   watch: {
     '$route': async function() {
       this.initialLoaded = false;
-      this.messages = [];
-      await this.fetchMessages();
+      // this.messages = [];
+      // await this.fetchMessages();
     }
   }
 }
